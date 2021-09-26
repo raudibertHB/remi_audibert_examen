@@ -19,7 +19,9 @@
         {% endblock %}
     </head>
     <body>
-    {{ include('includes/header.html.twig') }}
+    {% if app.user %}
+        {{ include('includes/header.html.twig') }}
+    {% endif %}
         {% block body %}{% endblock %}
     </body>
 </html>
