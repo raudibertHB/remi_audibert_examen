@@ -3,18 +3,42 @@
 {% block title %}Hello DashboardController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="row my-5">
+        <div class="col-6 mx-auto">
+            <div class="container">
+                <h1>Tableau de bord</h1>
+                <a href="{{ path("add_product") }}">+ Ajouter un produit</a>
+            </div>
+        </div>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="row">
+        <div class="col-8 mx-auto">
+            <div class="container">
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/hitre/Documents/Formation/Symfony/remi_audibert_examen/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/hitre/Documents/Formation/Symfony/remi_audibert_examen/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
-    </ul>
-</div>
+                <table class="table table-bordered table-dark">
+                    <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Nom de l'objet</th>
+                        <th scope="col">Prix</th>
+                        <th scope="col">Ajouté le</th>
+                        <th scope="col">Retirer de la vente</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <th scope="row">{{ product.id }}</th>
+                            <td>{{ product.name }} <img src="/products/img/{{ product.image }}" alt="{{ product.image }}"></td>
+                            <td>{{ product.price }}</td>
+                            <td>{{ product.creationDate|date("d/m/Y") }}</td>
+                            <td> retirer</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}
