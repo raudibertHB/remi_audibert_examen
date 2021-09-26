@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Form\ProductFormType;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
-    #[Route('/app/add-product', name: 'add_product')]
+    #[Route('/app/add_product', name: 'add_product')]
     public function addProduct(Request $request): Response
     {
         $product = new Product();
@@ -55,8 +57,43 @@ class ProductController extends AbstractController
             return $this->redirectToRoute('dashboard');
         }
 
-        return $this->render('product/add-product.html.twig', [
+        return $this->render('product/add_product.html.twig', [
             'productForm' => $productForm->createView()
         ]);
+    }
+
+
+    // TODO: TOGGLE STATUS
+    #[Route('/app/toggle_product', name: 'toggle_product')]
+    public function toggleProduct(Request $request): Response
+    {
+
+        $productRepository = $this->getDoctrine()->getRepository(Product::class);
+
+        $product = $productRepository->find($request->get('productId'));
+
+        if ($product->getStatus()) {
+            $product->setStatus(false);
+        } else {
+            $product->setStatus(true);
+        }
+
+        $this->getDoctrine()->getManager()->persist($product);
+        $this->getDoctrine()->getManager()->flush();
+
+        return new RedirectResponse("/app/dashboard");
+    }
+
+    #[Route('/app/browse_product', name: 'browse_products')]
+    public function browseProducts()
+    {
+        $productRepository = $this->getDoctrine()->getRepository(Product::class);
+
+        $products = $productRepository->findBy(['status' => true]);
+
+        return $this->render('product/browse_products.html.twig',
+            [
+                'products' => $products
+            ]);
     }
 }

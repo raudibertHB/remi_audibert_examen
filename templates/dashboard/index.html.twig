@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block body %}
     <div class="row my-5">
@@ -19,7 +19,6 @@
                 <table class="table table-bordered table-dark">
                     <thead>
                     <tr>
-                        <th scope="col">Id</th>
                         <th scope="col">Nom de l'objet</th>
                         <th scope="col">Prix</th>
                         <th scope="col">Ajouté le</th>
@@ -29,11 +28,31 @@
                     <tbody>
                     {% for product in products %}
                         <tr>
-                            <th scope="row">{{ product.id }}</th>
-                            <td>{{ product.name }} <img src="/products/img/{{ product.image }}" alt="{{ product.image }}"></td>
-                            <td>{{ product.price }}</td>
+                            <td class="d-flex justify-content-between align-item-center"><p>{{ product.name }}</p> <img class="w-25" src="/products/img/{{ product.image }}"
+                                                        alt="{{ product.image }}"></td>
+                            <td>{% if product.price > 0 %}
+                                    {{ product.price }} €
+                                {% else %}
+                                    Gratuit
+                                {% endif %}</td>
                             <td>{{ product.creationDate|date("d/m/Y") }}</td>
-                            <td> retirer</td>
+                            <td>
+                                {% if product.status == false %}
+                                    <form method="post" action="/app/toggle_product">
+                                        <input type="hidden" name="productId" value="{{ product.id }}">
+                                        <button class="btn btn-success">
+                                            Ajouter à la vente
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="/app/toggle_product">
+                                        <input type="hidden" name="productId" value="{{ product.id }}">
+                                        <button class="btn btn-danger">
+                                            Retirer
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
