@@ -3,14 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\User;
 use App\Form\ProductFormType;
 use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
@@ -96,4 +101,39 @@ class ProductController extends AbstractController
                 'products' => $products
             ]);
     }
+
+    #[Route('/products', name: 'getAvailableProducts', methods: 'GET')]
+    public function getAvailableProducts(SerializerInterface $serializer): JsonResponse
+    {
+        $productRepository = $this->getDoctrine()->getRepository(Product::class);
+        $products = $productRepository->findBy(['status' => true]);
+
+        $products = $serializer->serialize($products, "json", [
+            AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getId();
+            }
+        ]);
+
+        return new JsonResponse($products, 200, [], true);
+    }
+
+    #[Route('/products/{userId}', name: 'getAvailableProducts', methods: 'GET')]
+    public function getAvailableProductsByUser(int $userId, SerializerInterface $serializer): JsonResponse
+    {
+        $userRepository = $this->getDoctrine()->getRepository(User::class);
+        $user = $userRepository->find($userId);
+
+        $productRepository = $this->getDoctrine()->getRepository(Product::class);
+        $products = $productRepository->findBy(['status' => true, 'user' => $user]);
+
+        $products = $serializer->serialize($products, "json", [
+            AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getId();
+            }
+        ]);
+        return new JsonResponse($products, 200, [], true);
+    }
+
 }
