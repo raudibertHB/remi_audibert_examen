@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -19,38 +20,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
+     * @Groups("user")
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups("user")
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups("user")
      */
     private $roles = [];
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Groups("user")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("user")
      */
     private $lastname;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("user")
      */
     private $firstname;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="user", orphanRemoval=true)
+     * @Groups("user_products")
      */
     private $products;
 

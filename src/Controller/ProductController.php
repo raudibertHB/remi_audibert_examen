@@ -102,23 +102,18 @@ class ProductController extends AbstractController
             ]);
     }
 
-    #[Route('/products', name: 'getAvailableProducts', methods: 'GET')]
+    #[Route('/api/products', name: 'getAvailableProducts', methods: 'GET')]
     public function getAvailableProducts(SerializerInterface $serializer): JsonResponse
     {
         $productRepository = $this->getDoctrine()->getRepository(Product::class);
         $products = $productRepository->findBy(['status' => true]);
 
-        $products = $serializer->serialize($products, "json", [
-            AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
-                return $object->getId();
-            }
-        ]);
+        $products = $serializer->serialize($products, "json", ['groups' => ['product', 'product_user']]);
 
         return new JsonResponse($products, 200, [], true);
     }
 
-    #[Route('/products/{userId}', name: 'getAvailableProducts', methods: 'GET')]
+    #[Route('/api/products/{userId}', name: 'getAvailableProducts', methods: 'GET')]
     public function getAvailableProductsByUser(int $userId, SerializerInterface $serializer): JsonResponse
     {
         $userRepository = $this->getDoctrine()->getRepository(User::class);
@@ -127,12 +122,8 @@ class ProductController extends AbstractController
         $productRepository = $this->getDoctrine()->getRepository(Product::class);
         $products = $productRepository->findBy(['status' => true, 'user' => $user]);
 
-        $products = $serializer->serialize($products, "json", [
-            AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
-            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
-                return $object->getId();
-            }
-        ]);
+        $products = $serializer->serialize($products, "json", ['groups' => ['product']]);
+
         return new JsonResponse($products, 200, [], true);
     }
 

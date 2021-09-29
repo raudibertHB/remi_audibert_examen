@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -14,42 +15,50 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("product")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("product")
      */
     private $name;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups("product")
      */
     private $price;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("product")
      */
     private $creationDate;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("product")
      */
     private $status;
 
     /**
      * @ORM\Column(type="string", length=500)
+     * @Groups("product")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("product")
      */
     private $image;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("product_user")
      */
     private $user;
 
